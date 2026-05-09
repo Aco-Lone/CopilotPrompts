@@ -10,4 +10,6 @@ argument-hint: "spec/plan 完了済みの feature context、tasks context、task
 $ARGUMENTS
 ```
 
-task generation、implementation、focused validation と repair、review、shared context sync のうち、必要な subagent を自動 handoff しながら最小の次の一手を進めてください。shared context sync では、必要に応じて reusable な workflow、design、review knowledge を shared Copilot instructions に反映してください。
+task の修正（順序変更・分割・統合・acceptance 変更・spec 不整合解消）が必要と判定した場合は自動進行を停止し、変更案をまとめて handoff でユーザーの承認を求めてください。承認なしに task を再生成・再構成して継続しないでください。
+
+task 修正が不要な場合は、承認済み task slice の選択・implementation・focused validation と repair・review・context sync（knowledge がなければ no-op 記録）を 1 セットとして、残り task がなくなるまで自動継続してください。
