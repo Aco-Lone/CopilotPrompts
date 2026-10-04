@@ -2,7 +2,7 @@
 
 GitHub Copilot 向けのエージェント・プロンプトを配布するカタログです。
 
-公開サイト: [https://aco-lone.github.io/CopilotPrompts/](https://aco-lone.github.io/CopilotPrompts/)
+公開 URL（初回の GitHub Pages デプロイ後に利用可能）: [https://aco-lone.github.io/CopilotPrompts/](https://aco-lone.github.io/CopilotPrompts/)
 
 ## カタログ構成
 
