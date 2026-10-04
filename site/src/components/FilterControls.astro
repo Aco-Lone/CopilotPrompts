@@ -1,0 +1,32 @@
+---
+import type { CatalogTagCount } from "../lib/types";
+
+interface Props { tagCounts: CatalogTagCount[] }
+const { tagCounts } = Astro.props;
+const types = [["all", "すべて"], ["agent", "agent"], ["skill", "skill"], ["prompt", "prompt"], ["bundle", "bundle"]];
+---
+
+<section class="filters" id="filters" hidden aria-label="検索と絞り込み">
+  <div class="search-row">
+    <label for="q">検索</label>
+    <input id="q" type="search" autocomplete="off" />
+    <button type="button" id="clear-search">クリア</button>
+  </div>
+  <fieldset>
+    <legend>種別</legend>
+    <div class="radio-group">
+      {types.map(([value, label]) => (
+        <label><input type="radio" name="type" value={value} checked={value === "all"} /> {label}</label>
+      ))}
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>タグ</legend>
+    <ul class="tag-list">
+      {tagCounts.map(({ tag, count }) => (
+        <li><button type="button" class="tag-btn" data-filter-tag={tag} aria-pressed="false">{tag} ({count})</button></li>
+      ))}
+    </ul>
+  </fieldset>
+  <p id="count" aria-live="polite"></p>
+</section>

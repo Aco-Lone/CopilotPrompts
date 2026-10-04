@@ -1,0 +1,19 @@
+---
+import { siteUrl } from "../lib/site-urls";
+import { normalizeTag } from "../lib/item-schema";
+import type { CatalogIndexEntry } from "../lib/types";
+
+interface Props { item: CatalogIndexEntry }
+const { item } = Astro.props;
+---
+
+<li class="card" data-slug={item.slug}>
+  <h2><a href={siteUrl(`items/${item.slug}/`)}>{item.title}</a></h2>
+  <span class="badge">{item.type}</span>
+  <p>{item.summary}</p>
+  <ul class="tag-list" aria-label="タグ">
+    {item.tags.map((tag) => (
+      <li><button type="button" class="tag-btn" data-tag={normalizeTag(tag)} aria-pressed="false">{tag}</button></li>
+    ))}
+  </ul>
+</li>

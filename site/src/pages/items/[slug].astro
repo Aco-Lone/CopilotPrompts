@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import { fileURLToPath } from "node:url";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import CopyButton from "../../components/CopyButton.astro";
+import siteConfig from "../../../site.config";
+import { siteUrl } from "../../lib/site-urls";
+import { buildGigetCommand } from "../../lib/download-command";
+import { buildFileUrl, buildSourceUrl } from "../../lib/item-links";
+import { listItemFiles } from "../../lib/list-item-files";
+import { renderMarkdown } from "../../lib/render-markdown";
+import { normalizeTag } from "../../lib/item-schema";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("items");
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const slug = entry.id;
+const data = entry.data;
+const body = (entry.body ?? "").trim();
+const html = body === "" ? "" : renderMarkdown(body, slug, siteConfig);
+const command = buildGigetCommand(slug, siteConfig);
+const files = listItemFiles(fileURLToPath(new URL(`../../../../catalog/${slug}/`, import.meta.url)));
+---
+
+<SiteLayout title={`${data.title} | Copilot Prompts`} description={data.summary}>
+  <main>
+    <nav aria-label="パンくず"><a href={siteUrl("")}>トップ</a> &gt; <span>{data.title}</span></nav>
+    <h1>{data.title}</h1>
+    <p>{data.summary}</p>
+    <ul class="meta">
+      <li>種別: {data.type}</li>
+      {data.version && <li>バージョン: {data.version}</li>}
+      {data.author && <li>作者: {data.author}</li>}
+      {data.updated && <li>更新日: <time datetime={data.updated}>{data.updated}</time></li>}
+    </ul>
+    <ul class="tag-list" aria-label="タグ">
+      {data.tags.map((tag) => (
+        <li><a class="tag-link" href={`${siteUrl("")}?tags=${encodeURIComponent(normalizeTag(tag))}`}>{tag}</a></li>
+      ))}
+    </ul>
+    <p><a href={buildSourceUrl(slug, siteConfig)} target="_blank" rel="noopener noreferrer">GitHub でソースを見る</a></p>
+    <section>
+      <h2>ダウンロード</h2>
+      <CopyButton command={command} />
+      <p class="notes">Node.js が必要です。<code>./{slug}</code> フォルダが作成され、既存のフォルダがある場合は失敗します。上書きする場合は手動で <code>--force</code> を追加してください。</p>
+    </section>
+    <section>
+      <h2>説明</h2>
+      {html === "" ? <p>説明はありません</p> : <div class="markdown" set:html={html} />}
+    </section>
+    <section>
+      <h2>同梱ファイル</h2>
+      <ul>
+        {files.map((file) => (
+          <li><a href={buildFileUrl(slug, file, siteConfig)} rel="noopener noreferrer">{file}</a></li>
+        ))}
+      </ul>
+    </section>
+  </main>
+</SiteLayout>

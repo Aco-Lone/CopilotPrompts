@@ -1,0 +1,28 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["catalog/**", "site/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: site/.nvmrc
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - run: npm run validate
+      - run: npm test
+      - run: npm run build
+      - run: npm run check:size
