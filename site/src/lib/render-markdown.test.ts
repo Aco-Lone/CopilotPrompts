@@ -71,6 +71,30 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     expect(html).toContain('title="Team logo"');
   });
 
+  it("resolves relative href values in raw HTML with the shared URL resolver [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="docs/guide.md">Guide</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="https://github.com/Aco-Lone/CopilotPrompts/blob/feature/catalog-v2/catalog/review-agent/docs/guide.md"',
+    );
+  });
+
+  it("resolves relative src values in raw HTML with the shared URL resolver [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<img src="images/example.png" alt="Example">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'src="https://raw.githubusercontent.com/Aco-Lone/CopilotPrompts/feature/catalog-v2/catalog/review-agent/images/example.png"',
+    );
+  });
+
   it("preserves absolute HTTPS, mailto, and same-page anchor destinations [BLD-011, OVR-003]", () => {
     const html = renderMarkdown(
       "[web](https://example.com/path) [email](mailto:team@example.com) [section](#installation)",
