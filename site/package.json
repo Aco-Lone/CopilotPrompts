@@ -8,7 +8,8 @@
     "build": "npm run validate && astro build",
     "preview": "astro preview",
     "validate": "tsx scripts/validate-catalog.ts",
-    "test": "vitest run"
+    "test": "astro check && vitest run",
+    "check:size": "tsx scripts/check-client-size.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

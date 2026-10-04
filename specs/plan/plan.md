@@ -21,10 +21,10 @@
 | 3. 共通ロジック | 完了 | `df24872`, `975706e`。索引、タグ件数、絞り込み、query、giget、URL、ファイル一覧。82/82、check 成功。仕様レビュー通過、品質レビューで重大な問題なし。 |
 | 4. 既存資産移行 | 完了 | `91b5731`, `273ab22`。29 ファイルを 5 バンドルへ R100 移行、README 5 件作成、root README 更新。`npm run validate` 成功。仕様・品質レビュー通過。 |
 | 5. Markdown renderer | 停止中・未最終レビュー | `f6f684a`〜`0eedf9d`。GFM、HTML allowlist sanitization、相対 URL 解決と複数の回帰修正を実装。最新 agent 報告は renderer 30/30、全体 112/112、check/validate/build 成功。 |
-| 6. トップページ | 未着手 | 検索・種別/タグ絞り込み、URL 同期、a11y、no-JS 対応。 |
-| 7. 詳細・404 ページ | 未着手 | README 表示、ダウンロード・コピー、ファイル一覧、404。 |
-| 8. 品質ゲート | 未着手 | E2E 3 browser、axe、性能、サイズ、Lighthouse。 |
-| 9. CI / Pages | 未着手 | PR 検証、GitHub Pages deploy、giget 実取得確認。 |
+| 6. トップページ | 完了 | 一覧・検索・種別/タグ絞り込み・URL 同期・no-JS 対応を実装（純粋ロジックは TDD）。 |
+| 7. 詳細・404 ページ | 完了 | 詳細・コピー・ファイル一覧・404 を実装。check/build 成功。 |
+| 8. 品質ゲート | 一部完了 | JS gzip サイズ検査（`npm run check:size`）と `npm test` 統合のみ。Playwright E2E・axe・Lighthouse は未着手。 |
+| 9. CI / Pages | 一部完了 | validate / deploy-pages workflow を追加。Lighthouse ゲートと giget 実取得確認は未実施。 |
 
 **停止位置の注意:** 最後の仕様レビューは `61dfcc5` を対象にし、タブを含む protocol-relative URL の `rel` と tab-prefixed HTTPS の扱いに不足を指摘した。実装 agent はこれを `0eedf9d` で修正したと報告しているが、その commit 自体の spec / code-quality 再レビューは未実施。再開時は Task 5 の最新 commit をレビューしてから Task 6 に進む。Pages は未公開で、root README の URL は初回デプロイ後に利用可能と明記済み。
 

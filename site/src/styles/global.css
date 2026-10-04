@@ -1,0 +1,32 @@
+:root { color-scheme: light; --fg:#1f2328; --muted:#59636e; --border:#d1d9e0; --accent:#0550ae; --bg:#fff; --chip:#eaeef2; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif; color:var(--fg); background:var(--bg); line-height:1.6; }
+main, .site-header, .site-footer { max-width: 64rem; margin: 0 auto; padding: 1rem; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid #0969da; outline-offset: 2px; }
+[hidden] { display: none !important; }
+.site-header a { color: var(--fg); font-weight: 700; text-decoration: none; }
+.filters { display:grid; gap:.75rem; margin-bottom:1rem; }
+.filters label, .filters legend { font-weight: 600; }
+.search-row { display:flex; gap:.5rem; flex-wrap:wrap; }
+.search-row input { flex:1 1 12rem; min-width:0; padding:.5rem; font:inherit; }
+fieldset { border:1px solid var(--border); padding:.5rem .75rem; margin:0; }
+.radio-group { display:flex; gap:1rem; flex-wrap:wrap; }
+.tag-list { display:flex; gap:.5rem; flex-wrap:wrap; padding:0; margin:.5rem 0 0; list-style:none; }
+.tag-btn, .tag-link { border:1px solid var(--border); background:var(--chip); color:var(--fg); border-radius:999px; padding:.15rem .75rem; font:inherit; cursor:pointer; text-decoration:none; }
+.tag-btn[aria-pressed="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+button { font:inherit; padding:.4rem .8rem; cursor:pointer; }
+.cards { list-style:none; padding:0; display:grid; gap:1rem; grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr)); }
+.card { border:1px solid var(--border); border-radius:.5rem; padding:1rem; }
+.card h2 { font-size:1.1rem; margin:0 0 .25rem; }
+.card p { margin:.25rem 0; }
+.badge { display:inline-block; font-size:.8rem; color:var(--muted); border:1px solid var(--border); border-radius:.25rem; padding:0 .4rem; }
+.meta { color:var(--muted); font-size:.9rem; display:flex; gap:1rem; flex-wrap:wrap; padding:0; list-style:none; }
+.command { overflow-x:auto; white-space:pre; background:#f6f8fa; border:1px solid var(--border); padding:.75rem; border-radius:.5rem; }
+.notes { color:var(--muted); font-size:.9rem; }
+.markdown pre { overflow-x:auto; background:#f6f8fa; padding:.75rem; border-radius:.5rem; }
+.markdown { overflow-wrap:anywhere; }
+.markdown table { display:block; overflow-x:auto; border-collapse:collapse; }
+.markdown th, .markdown td { border:1px solid var(--border); padding:.25rem .5rem; }
+.markdown img { max-width:100%; height:auto; }
+.empty { padding:1rem; border:1px dashed var(--border); }

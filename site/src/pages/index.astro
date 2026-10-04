@@ -1,10 +1,29 @@
 ---
+import { getCollection } from "astro:content";
 import SiteLayout from "../layouts/SiteLayout.astro";
+import ItemCard from "../components/ItemCard.astro";
+import FilterControls from "../components/FilterControls.astro";
+import { buildCatalogIndex, buildTagCounts } from "../lib/catalog-index";
+import { serializeForScript } from "../lib/embed-json";
+
+const entries = await getCollection("items");
+const index = buildCatalogIndex(entries.map((e) => ({ ...e.data, slug: e.id })));
+const tagCounts = buildTagCounts(index);
 ---
 
-<SiteLayout title="Copilot Prompts">
+<SiteLayout title="Copilot Prompts" description="GitHub Copilot 向けプロンプト・エージェントのカタログ">
   <main>
     <h1>Copilot Prompts</h1>
-    <p>サイト準備中です。</p>
+    <FilterControls tagCounts={tagCounts} />
+    <p id="empty" class="empty" hidden>
+      条件に一致するアイテムはありません <button type="button" id="reset-all">すべての条件を解除</button>
+    </p>
+    <ul class="cards" id="cards">
+      {index.map((item) => <ItemCard item={item} />)}
+    </ul>
+    <script is:inline type="application/json" id="catalog-index" set:html={serializeForScript(index)} />
   </main>
+  <script>
+    import "../scripts/catalog-filter";
+  </script>
 </SiteLayout>

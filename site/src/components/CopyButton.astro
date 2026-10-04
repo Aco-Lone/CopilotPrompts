@@ -1,0 +1,14 @@
+---
+interface Props { command: string }
+const { command } = Astro.props;
+if (command.length === 0) throw new Error("CopyButton requires a non-empty command");
+---
+
+<div class="download" data-copy-root>
+  <pre class="command"><code data-command>{command}</code></pre>
+  <button type="button" data-copy-button hidden>コマンドをコピー</button>
+  <span role="status" aria-live="polite" data-copy-status></span>
+</div>
+<script>
+  import "../scripts/copy-command";
+</script>
