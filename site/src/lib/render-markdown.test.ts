@@ -119,6 +119,42 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     );
   });
 
+  it("keeps percent-encoded control bytes in relative paths [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="docs/%09guide.md">Guide</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="https://github.com/Aco-Lone/CopilotPrompts/blob/feature/catalog-v2/catalog/review-agent/docs/%09guide.md"',
+    );
+  });
+
+  it("lets the sanitizer remove an entity-tab-obfuscated javascript link [NFR-008, BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="java&#x09;script:alert(1)">Unsafe link</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain("Unsafe link");
+    expect(html).not.toContain("href=");
+    expect(html).not.toMatch(/javascript/iu);
+  });
+
+  it("lets the sanitizer remove CR/LF-obfuscated javascript image sources [NFR-008, BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<img src="java&#x0D;&#x0A;script:alert(1)" alt="Unsafe image">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain('alt="Unsafe image"');
+    expect(html).not.toContain("src=");
+    expect(html).not.toMatch(/javascript/iu);
+  });
+
   it("keeps ASCII-padded raw HTML anchors as page fragments without external rel [BLD-011, OVR-003]", () => {
     const html = renderMarkdown(
       '<a href=" #section ">Section</a>',

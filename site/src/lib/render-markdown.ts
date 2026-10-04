@@ -99,6 +99,10 @@ function trimAsciiUrlWhitespace(url: string): string {
   return url.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/gu, "");
 }
 
+function hasControlWhitespace(url: string): boolean {
+  return /[\u0009-\u000d]/u.test(url);
+}
+
 function shouldDeferUrlToSanitizer(url: string): boolean {
   const trimmedUrl = trimAsciiUrlWhitespace(url);
   return /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl) && !/^(?:https?:|mailto:)/iu.test(trimmedUrl);
@@ -126,7 +130,7 @@ const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = 
 
     const property = kind === "link" ? "href" : "src";
     const url = element.properties[property];
-    if (typeof url !== "string") {
+    if (typeof url !== "string" || hasControlWhitespace(url)) {
       return;
     }
 
