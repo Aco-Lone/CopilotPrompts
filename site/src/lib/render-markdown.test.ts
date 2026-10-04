@@ -119,6 +119,29 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     );
   });
 
+  it("keeps ASCII-padded raw HTML anchors as page fragments without external rel [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href=" #section ">Section</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain('href="#section"');
+    expect(html).not.toContain("github.com");
+    expect(html).not.toContain('rel="noopener noreferrer"');
+  });
+
+  it("keeps ASCII-padded Markdown anchors as page fragments [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      "[section]( #section )",
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain('href="#section"');
+    expect(html).not.toContain('rel="noopener noreferrer"');
+  });
+
   it("keeps whitespace-wrapped absolute HTTPS raw links external with safe rel [BLD-011, NFR-011, OVR-003]", () => {
     const html = renderMarkdown(
       '<a href=" https://example.com/path ">Example</a>',
