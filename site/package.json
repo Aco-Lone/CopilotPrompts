@@ -5,12 +5,22 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "npm run validate && astro build",
+    "preview": "astro preview",
+    "validate": "tsx scripts/validate-catalog.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
     "astro": "^7.3.5",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@vitest/coverage-v8": "^5.0.3",
+    "tsx": "^4.23.15",
+    "vitest": "^5.0.3"
   }
 }
