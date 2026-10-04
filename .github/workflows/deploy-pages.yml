@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+      - uses: actions/configure-pages@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: site/.nvmrc
