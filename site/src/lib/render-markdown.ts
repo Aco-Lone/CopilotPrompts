@@ -94,18 +94,15 @@ interface ElementLike {
   properties?: Record<string, unknown>;
 }
 
-function trimAsciiUrlWhitespace(url: string): string {
-  // Unicode whitespace can be part of a catalog filename.
-  return url.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/gu, "");
-}
-
-function hasControlWhitespace(url: string): boolean {
-  return /[\u0009-\u000d]/u.test(url);
+function normalizeAsciiUrlWhitespace(url: string): string {
+  // Match URL parsing without consuming Unicode whitespace from catalog filenames.
+  return url
+    .replace(/[\t\n\r]/gu, "")
+    .replace(/^[\u0000-\u0020]+|[\u0000-\u0020]+$/gu, "");
 }
 
 function shouldDeferUrlToSanitizer(url: string): boolean {
-  const trimmedUrl = trimAsciiUrlWhitespace(url);
-  return /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl) && !/^(?:https?:|mailto:)/iu.test(trimmedUrl);
+  return /^[a-z][a-z\d+.-]*:/iu.test(url) && !/^(?:https?:|mailto:)/iu.test(url);
 }
 
 function normalizeSafeUrlScheme(url: string): string {
@@ -130,27 +127,27 @@ const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = 
 
     const property = kind === "link" ? "href" : "src";
     const url = element.properties[property];
-    if (typeof url !== "string" || hasControlWhitespace(url)) {
+    if (typeof url !== "string") {
       return;
     }
 
-    const trimmedUrl = trimAsciiUrlWhitespace(url);
-    if (trimmedUrl.startsWith("#")) {
-      element.properties[property] = trimmedUrl;
+    const normalizedUrl = normalizeAsciiUrlWhitespace(url);
+    if (normalizedUrl.startsWith("#")) {
+      element.properties[property] = normalizedUrl;
       return;
     }
 
-    if (trimmedUrl.startsWith("//")) {
-      element.properties[property] = trimmedUrl;
+    if (normalizedUrl.startsWith("//")) {
+      element.properties[property] = normalizedUrl;
       return;
     }
 
-    if (shouldDeferUrlToSanitizer(trimmedUrl)) {
+    if (shouldDeferUrlToSanitizer(normalizedUrl)) {
       return;
     }
 
-    const hasScheme = /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl);
-    const urlToResolve = hasScheme ? trimmedUrl : url;
+    const hasScheme = /^[a-z][a-z\d+.-]*:/iu.test(normalizedUrl);
+    const urlToResolve = normalizedUrl;
     const resolvedUrl = resolveRelativeUrl(urlToResolve, slug, kind, siteConfig);
     element.properties[property] = hasScheme ? normalizeSafeUrlScheme(resolvedUrl) : resolvedUrl;
   });

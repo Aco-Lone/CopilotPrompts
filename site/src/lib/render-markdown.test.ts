@@ -201,6 +201,40 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     expect(html).not.toContain("rel=");
   });
 
+  it("normalizes a leading entity-tab in protocol-relative raw links [BLD-011, NFR-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="&#x09;//cdn.example/path">CDN</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain('href="//cdn.example/path" rel="noopener noreferrer"');
+  });
+
+  it("normalizes a leading entity-tab in protocol-relative raw images [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<img src="&#x09;//cdn.example/image.png" alt="CDN image">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain('src="//cdn.example/image.png"');
+    expect(html).not.toContain("rel=");
+  });
+
+  it("normalizes a leading entity-tab before HTTPS link classification [BLD-011, NFR-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="&#x09;https://example.com/path">HTTPS</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="https://example.com/path" rel="noopener noreferrer"',
+    );
+    expect(html).not.toContain("github.com");
+  });
+
   it("keeps whitespace-wrapped absolute HTTPS raw links external with safe rel [BLD-011, NFR-011, OVR-003]", () => {
     const html = renderMarkdown(
       '<a href=" https://example.com/path ">Example</a>',
