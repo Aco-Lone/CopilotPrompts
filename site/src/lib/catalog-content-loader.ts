@@ -13,7 +13,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-async function parseOriginalDate<TData extends Record<string, unknown>>(
+async function parseRawFrontmatter<TData extends Record<string, unknown>>(
   context: LoaderContext,
   options: ParseDataOptions<TData>,
 ): Promise<TData> {
@@ -27,12 +27,16 @@ async function parseOriginalDate<TData extends Record<string, unknown>>(
     throw new Error(`${options.filePath}: ${frontmatter.messages.join("; ")}`);
   }
 
-  const data = { ...options.data };
-  if (isRecord(frontmatter.data) && Object.hasOwn(frontmatter.data, "updated")) {
-    Object.assign(data, { updated: frontmatter.data.updated });
-  } else {
-    Reflect.deleteProperty(data, "updated");
+  if (!isRecord(frontmatter.data)) {
+    throw new Error(`${options.filePath}: YAML frontmatter must be a mapping.`);
   }
+
+  const data = { ...options.data };
+  // Remove every js-yaml value so coerced Date objects cannot leak into validation.
+  for (const key of Object.keys(data)) {
+    Reflect.deleteProperty(data, key);
+  }
+  Object.assign(data, frontmatter.data);
 
   return context.parseData({ ...options, data });
 }
@@ -40,11 +44,11 @@ async function parseOriginalDate<TData extends Record<string, unknown>>(
 export const catalogContentLoader: Loader = {
   name: "catalog-content-loader",
   load(context) {
-    // Keep glob's discovery/rendering, but restore the raw scalar before schema validation.
+    // Keep glob's discovery/rendering while validating the shared YAML 1.2 frontmatter parse.
     return markdownLoader.load({
       ...context,
       parseData: <TData extends Record<string, unknown>>(options: ParseDataOptions<TData>) =>
-        parseOriginalDate(context, options),
+        parseRawFrontmatter(context, options),
     });
   },
 };

@@ -36,16 +36,16 @@ afterEach(async () => {
   }
 });
 
-async function writeCollectionFixture(updated: string): Promise<void> {
+async function writeCollectionFixture(updated: string, dateLikeStringFields = false): Promise<void> {
   await ensureCatalogRoot();
   await mkdir(itemDirectory);
   await writeFile(
     join(itemDirectory, "README.md"),
     [
       "---",
-      "title: Date regression",
-      "summary: This item exercises collection date validation.",
-      "tags: [date]",
+      `title: ${dateLikeStringFields ? "2024-02-29" : "Date regression"}`,
+      `summary: ${dateLikeStringFields ? "2024-02-29" : "This item exercises collection date validation."}`,
+      `tags: ${dateLikeStringFields ? "[2024-02-29]" : "[date]"}`,
       "type: prompt",
       `updated: ${updated}`,
       "---",
@@ -55,6 +55,7 @@ async function writeCollectionFixture(updated: string): Promise<void> {
     ].join("\n"),
     "utf8",
   );
+  await writeFile(join(itemDirectory, `${itemSlug}.prompt.md`), "Prompt fixture.", "utf8");
 }
 
 function runAstroSync() {
@@ -75,6 +76,21 @@ describe("Astro Content Collection date validation [CNT-007]", () => {
       expect(result.error).toBeUndefined();
       expect(result.signal).toBeNull();
       expect(result.status).toBe(0);
+    },
+    30_000,
+  );
+
+  it(
+    "preserves date-like YAML string scalars in title, summary, and tags [CNT-004..006]",
+    async () => {
+      await writeCollectionFixture("2024-02-29", true);
+
+      const result = runAstroSync();
+      const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+      expect(result.error).toBeUndefined();
+      expect(result.signal).toBeNull();
+      expect(result.status, output).toBe(0);
     },
     30_000,
   );
