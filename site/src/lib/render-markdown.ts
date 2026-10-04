@@ -136,6 +136,11 @@ const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = 
       return;
     }
 
+    if (trimmedUrl.startsWith("//")) {
+      element.properties[property] = trimmedUrl;
+      return;
+    }
+
     if (shouldDeferUrlToSanitizer(trimmedUrl)) {
       return;
     }
