@@ -1,12 +1,10 @@
 import { readdir, readFile } from "node:fs/promises";
 import type { Dirent } from "node:fs";
 import { relative, resolve, sep, join } from "node:path";
-import { parseDocument, YAMLParseError } from "yaml";
 import type { CatalogDiagnostic, CatalogValidationResult } from "./types";
 import { itemSchema, validateSlug } from "./item-schema";
 import type { ItemFrontmatter } from "./item-schema";
-
-type FrontmatterParseResult = { ok: true; data: unknown } | { ok: false; messages: string[] };
+import { parseMarkdownFrontmatter } from "./markdown-frontmatter";
 
 function relativeCatalogPath(root: string, target: string): string {
   return relative(root, target).split(sep).join("/");
@@ -23,39 +21,6 @@ function getIssueKey(path: readonly (string | number | symbol)[]): string | unde
     }
     return `${key}${key ? "." : ""}${String(part)}`;
   }, "");
-}
-
-function parseFrontmatter(contents: string): FrontmatterParseResult {
-  const text = contents.startsWith("\uFEFF") ? contents.slice(1) : contents;
-  const lines = text.split(/\r?\n/u);
-  if (lines[0]?.trim() !== "---") {
-    return { ok: false, messages: ["YAML frontmatter must begin with ---"] };
-  }
-
-  const closingDelimiter = lines.findIndex((line, index) => index > 0 && line.trim() === "---");
-  if (closingDelimiter === -1) {
-    return { ok: false, messages: ["YAML frontmatter is missing its closing --- delimiter"] };
-  }
-
-  let document;
-  try {
-    document = parseDocument(lines.slice(1, closingDelimiter).join("\n"), {
-      schema: "core",
-      uniqueKeys: true,
-      version: "1.2",
-    });
-  } catch (error) {
-    if (error instanceof YAMLParseError) {
-      return { ok: false, messages: [error.message] };
-    }
-    throw error;
-  }
-
-  if (document.errors.length > 0) {
-    return { ok: false, messages: document.errors.map((error) => error.message) };
-  }
-
-  return { ok: true, data: document.toJS() };
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -105,7 +70,7 @@ async function validateSkillFile(
   diagnostics: CatalogDiagnostic[],
 ): Promise<void> {
   const contents = await readFile(skillFile, "utf8");
-  const frontmatter = parseFrontmatter(contents);
+  const frontmatter = parseMarkdownFrontmatter(contents);
 
   if (!frontmatter.ok) {
     for (const message of frontmatter.messages) {
@@ -206,7 +171,7 @@ async function validateItem(
   }
 
   const readmeContents = await readFile(join(itemDirectory, readmeEntry.name), "utf8");
-  const frontmatter = parseFrontmatter(readmeContents);
+  const frontmatter = parseMarkdownFrontmatter(readmeContents);
   if (!frontmatter.ok) {
     for (const message of frontmatter.messages) {
       diagnostics.push({
