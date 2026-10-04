@@ -99,6 +99,11 @@ function shouldDeferUrlToSanitizer(url: string): boolean {
   return /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl) && !/^(?:https?:|mailto:)/iu.test(trimmedUrl);
 }
 
+function normalizeSafeUrlScheme(url: string): string {
+  // The sanitizer checks protocol casing; lowercasing only the scheme preserves URL semantics.
+  return url.replace(/^(https?|mailto):/iu, (scheme) => scheme.toLowerCase());
+}
+
 const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = (
   slug,
   siteConfig,
@@ -120,7 +125,8 @@ const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = 
       return;
     }
 
-    element.properties[property] = resolveRelativeUrl(url.trim(), slug, kind, siteConfig);
+    const resolvedUrl = resolveRelativeUrl(url.trim(), slug, kind, siteConfig);
+    element.properties[property] = normalizeSafeUrlScheme(resolvedUrl);
   });
 };
 

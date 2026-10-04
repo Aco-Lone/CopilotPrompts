@@ -131,6 +131,68 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     expect(html).not.toMatch(/(?:javascript|data):/iu);
   });
 
+  it("preserves mixed-case HTTPS links through sanitization [BLD-011, NFR-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="HTTPS://Example.COM/SomePath?Key=MiXeD">HTTPS</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="https://Example.COM/SomePath?Key=MiXeD" rel="noopener noreferrer"',
+    );
+    expect(html).not.toContain("github.com");
+  });
+
+  it("preserves mixed-case HTTP links through sanitization [BLD-011, NFR-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="Http://Example.COM/SomePath?Key=MiXeD">HTTP</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="http://Example.COM/SomePath?Key=MiXeD" rel="noopener noreferrer"',
+    );
+    expect(html).not.toContain("github.com");
+  });
+
+  it("preserves mixed-case MAILTO links through sanitization [BLD-011, NFR-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="MAILTO:Team@Example.COM?subject=MiXeD">Email</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="mailto:Team@Example.COM?subject=MiXeD" rel="noopener noreferrer"',
+    );
+  });
+
+  it("preserves mixed-case HTTPS image URLs through sanitization [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<img src="HTTPS://Images.Example.COM/path/Logo.PNG?Width=Large" alt="Logo">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'src="https://Images.Example.COM/path/Logo.PNG?Width=Large"',
+    );
+  });
+
+  it("continues to remove mixed-case javascript and data URLs [NFR-008, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="JaVaScRiPt:alert(1)">Unsafe link</a>\n\n<img src="DaTa:image/png;base64,AAAA" alt="Unsafe image">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain("Unsafe link");
+    expect(html).not.toMatch(/(?:href|src)="[^"]*(?:javascript|data):/iu);
+    expect(html).not.toMatch(/(?:javascript|data):/iu);
+  });
+
   it("preserves absolute HTTPS, mailto, and same-page anchor destinations [BLD-011, OVR-003]", () => {
     const html = renderMarkdown(
       "[web](https://example.com/path) [email](mailto:team@example.com) [section](#installation)",
