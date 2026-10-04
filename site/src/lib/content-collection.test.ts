@@ -58,6 +58,29 @@ async function writeCollectionFixture(updated: string, dateLikeStringFields = fa
   await writeFile(join(itemDirectory, `${itemSlug}.prompt.md`), "Prompt fixture.", "utf8");
 }
 
+async function writeProtoFixture(): Promise<void> {
+  await ensureCatalogRoot();
+  await mkdir(itemDirectory);
+  await writeFile(
+    join(itemDirectory, "README.md"),
+    [
+      "---",
+      "__proto__:",
+      "  title: inherited title",
+      "  summary: inherited summary",
+      "  tags:",
+      "    - inherited",
+      "  type: prompt",
+      "---",
+      "",
+      "Prototype fixture.",
+      "",
+    ].join("\n"),
+    "utf8",
+  );
+  await writeFile(join(itemDirectory, `${itemSlug}.prompt.md`), "Prompt fixture.", "utf8");
+}
+
 function runAstroSync() {
   return spawnSync(process.execPath, [astroCli, "sync"], {
     cwd: siteRoot,
@@ -107,6 +130,23 @@ describe("Astro Content Collection date validation [CNT-007]", () => {
       expect(result.signal).toBeNull();
       expect(result.status, output).not.toBe(0);
       expect(output).toMatch(/updated/i);
+    },
+    30_000,
+  );
+
+  it(
+    "reports __proto__ as an unknown frontmatter key through the strict collection schema",
+    async () => {
+      await writeProtoFixture();
+
+      const result = runAstroSync();
+      const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+      expect(result.error).toBeUndefined();
+      expect(result.signal).toBeNull();
+      expect(result.status, output).not.toBe(0);
+      expect(output).toContain("[InvalidContentEntryDataError]");
+      expect(output).toContain('Unrecognized key: "__proto__"');
     },
     30_000,
   );

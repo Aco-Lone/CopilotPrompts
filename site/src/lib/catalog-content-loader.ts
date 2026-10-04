@@ -36,7 +36,15 @@ async function parseRawFrontmatter<TData extends Record<string, unknown>>(
   for (const key of Object.keys(data)) {
     Reflect.deleteProperty(data, key);
   }
-  Object.assign(data, frontmatter.data);
+  // Define parsed keys directly so "__proto__" stays an own data property.
+  for (const [key, value] of Object.entries(frontmatter.data)) {
+    Object.defineProperty(data, key, {
+      configurable: true,
+      enumerable: true,
+      value,
+      writable: true,
+    });
+  }
 
   return context.parseData({ ...options, data });
 }
