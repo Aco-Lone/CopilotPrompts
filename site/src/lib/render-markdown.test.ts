@@ -95,6 +95,42 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     );
   });
 
+  it("keeps whitespace-wrapped absolute HTTPS raw links external with safe rel [BLD-011, NFR-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href=" https://example.com/path ">Example</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="https://example.com/path" rel="noopener noreferrer"',
+    );
+    expect(html).not.toContain("github.com");
+  });
+
+  it("keeps whitespace-wrapped absolute HTTPS raw images external [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<img src=" https://example.com/image.png " alt="Example">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain('src="https://example.com/image.png"');
+    expect(html).not.toContain("raw.githubusercontent.com");
+  });
+
+  it("passes whitespace-prefixed unsafe schemes through to the sanitizer [NFR-008, BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href=" javascript:alert(1) ">Unsafe link</a>\n\n<img src=" data:image/png;base64,AAAA " alt="Unsafe image">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain("Unsafe link");
+    expect(html).not.toMatch(/(?:href|src)="[^"]*(?:javascript|data):/iu);
+    expect(html).not.toMatch(/(?:javascript|data):/iu);
+  });
+
   it("preserves absolute HTTPS, mailto, and same-page anchor destinations [BLD-011, OVR-003]", () => {
     const html = renderMarkdown(
       "[web](https://example.com/path) [email](mailto:team@example.com) [section](#installation)",

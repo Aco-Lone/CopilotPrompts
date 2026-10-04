@@ -95,7 +95,8 @@ interface ElementLike {
 }
 
 function shouldDeferUrlToSanitizer(url: string): boolean {
-  return /^[a-z][a-z\d+.-]*:/iu.test(url) && !/^(?:https?:|mailto:)/iu.test(url);
+  const trimmedUrl = url.trim();
+  return /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl) && !/^(?:https?:|mailto:)/iu.test(trimmedUrl);
 }
 
 const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = (
@@ -119,7 +120,7 @@ const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = 
       return;
     }
 
-    element.properties[property] = resolveRelativeUrl(url, slug, kind, siteConfig);
+    element.properties[property] = resolveRelativeUrl(url.trim(), slug, kind, siteConfig);
   });
 };
 
