@@ -25,6 +25,11 @@ export interface CatalogIndexEntry {
   updated?: string;
 }
 
+export interface CatalogTagCount {
+  tag: string;
+  count: number;
+}
+
 export interface CatalogQuery {
   q: string;
   type: ItemType | "all";
