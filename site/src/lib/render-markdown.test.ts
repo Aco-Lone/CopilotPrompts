@@ -95,6 +95,30 @@ describe("renderMarkdown [BLD-009, BLD-011, NFR-008/011, OVR-003]", () => {
     );
   });
 
+  it("preserves a leading NBSP in raw relative href paths [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<a href="\u00a0guide.md">Guide</a>',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'href="https://github.com/Aco-Lone/CopilotPrompts/blob/feature/catalog-v2/catalog/review-agent/%C2%A0guide.md"',
+    );
+  });
+
+  it("preserves a trailing NBSP in raw relative image paths [BLD-011, OVR-003]", () => {
+    const html = renderMarkdown(
+      '<img src="images/example.png\u00a0" alt="Example">',
+      "review-agent",
+      siteConfig,
+    );
+
+    expect(html).toContain(
+      'src="https://raw.githubusercontent.com/Aco-Lone/CopilotPrompts/feature/catalog-v2/catalog/review-agent/images/example.png%C2%A0"',
+    );
+  });
+
   it("keeps whitespace-wrapped absolute HTTPS raw links external with safe rel [BLD-011, NFR-011, OVR-003]", () => {
     const html = renderMarkdown(
       '<a href=" https://example.com/path ">Example</a>',

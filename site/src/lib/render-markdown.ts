@@ -94,8 +94,13 @@ interface ElementLike {
   properties?: Record<string, unknown>;
 }
 
+function trimAsciiUrlWhitespace(url: string): string {
+  // Unicode whitespace can be part of a catalog filename.
+  return url.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/gu, "");
+}
+
 function shouldDeferUrlToSanitizer(url: string): boolean {
-  const trimmedUrl = url.trim();
+  const trimmedUrl = trimAsciiUrlWhitespace(url);
   return /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl) && !/^(?:https?:|mailto:)/iu.test(trimmedUrl);
 }
 
@@ -121,12 +126,19 @@ const rewriteItemRelativeUrls: Plugin<[slug: string, siteConfig: SiteConfig]> = 
 
     const property = kind === "link" ? "href" : "src";
     const url = element.properties[property];
-    if (typeof url !== "string" || shouldDeferUrlToSanitizer(url)) {
+    if (typeof url !== "string") {
       return;
     }
 
-    const resolvedUrl = resolveRelativeUrl(url.trim(), slug, kind, siteConfig);
-    element.properties[property] = normalizeSafeUrlScheme(resolvedUrl);
+    const trimmedUrl = trimAsciiUrlWhitespace(url);
+    if (shouldDeferUrlToSanitizer(trimmedUrl)) {
+      return;
+    }
+
+    const hasScheme = /^[a-z][a-z\d+.-]*:/iu.test(trimmedUrl);
+    const urlToResolve = hasScheme ? trimmedUrl : url;
+    const resolvedUrl = resolveRelativeUrl(urlToResolve, slug, kind, siteConfig);
+    element.properties[property] = hasScheme ? normalizeSafeUrlScheme(resolvedUrl) : resolvedUrl;
   });
 };
 
