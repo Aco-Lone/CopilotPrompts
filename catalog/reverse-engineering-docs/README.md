@@ -1,3 +1,9 @@
+---
+title: リバースエンジニアリング設計書生成
+summary: ソースコードから PlantUML 図付き AsciiDoc 設計書を生成するエージェント群
+tags: [reverse-engineering, design-doc, asciidoc, plantuml, orchestration]
+type: bundle
+---
 # ソースコードリバースエンジニアリング設計書生成エージェント
 
 ソースコードを解析し、アーキテクチャ設計・静的設計・動的設計・例外設計を含む

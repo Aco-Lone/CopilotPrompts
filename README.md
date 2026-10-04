@@ -1,52 +1,18 @@
 # VS Code GitHub Copilot Prompts
 
-GitHub Copilot のプロンプトライブラリ
+GitHub Copilot 向けのエージェント・プロンプトを配布するカタログです。
 
----
+公開サイト: [https://aco-lone.github.io/CopilotPrompts/](https://aco-lone.github.io/CopilotPrompts/)
 
-## エージェント一覧
+## カタログ構成
 
-### TDD オーケストレーション
+`catalog/<slug>/` の各フォルダが 1 つのカタログアイテムです。フォルダにはアイテム情報を記載する `README.md` と、配布するエージェント・プロンプトなどのファイルを置きます。アイテムの説明とメタデータは、それぞれのフォルダ内の `README.md` を参照してください。
 
-詳細設計書からテストファーストで実装を自動化するエージェント群。
+## アイテムの追加
 
-| エージェント | 役割 |
-|---|---|
-| **TDD Orchestrator** | メインエントリポイント。Red-Green-Refactor サイクルを調整 |
-| **Design Analyst** | 設計書を解析し `context.md` / `units.md` を生成 |
-| **C# Test Writer** | TDD Red フェーズ。失敗テストを生成 |
-| **C# Implementer** | TDD Green フェーズ。最小実装を生成 |
-| **Code Refactorer** | TDD Refactor フェーズ。テスト維持しながらコードを整理 |
-| **Code Reviewer** | 実装が設計書仕様に準拠しているか確認 |
-| **CI Verifier** | `dotnet build` / `dotnet test` を実行し結果をフィードバック |
+1. `catalog/` に小文字英数字とハイフンで slug を付けたフォルダを作成します。
+2. フォルダ直下に `README.md` を作成し、必須の `title`・`summary`・`tags`・`type` とアイテムの説明を記載します。
+3. `type` に対応する配布ファイルを同じフォルダに追加します。
+4. `site/` で `npm run validate` を実行し、カタログを検証します。
 
-**使い方:**
-```
-@TDD Orchestrator docs/design/order-service.md
-```
-
-詳細: [README/TDD-AGENT-README.md](README/TDD-AGENT-README.md)
-
----
-
-### リバースエンジニアリング設計書生成
-
-ソースコードから AsciiDoc 設計書（PlantUML 図付き）を自動生成するエージェント群。
-
-| エージェント | 役割 |
-|---|---|
-| **Design Reverser** | メインエントリポイント。全フェーズを調整 |
-| **Reverse Architecture Analyst** | アーキテクチャ・レイヤー構造を解析 |
-| **Reverse Static Analyst** | クラス・インターフェース・データ設計を解析 |
-| **Reverse Dynamic Analyst** | シーケンス図・状態遷移図を生成 |
-| **Reverse Exception Analyst** | 例外クラス・エラーハンドリングを解析 |
-| **Reverse Doc Assembler** | 各セクションを統合して最終設計書を組み立て |
-
-**使い方:**
-```
-@Design Reverser src/
-```
-
-詳細: [README/REVERSE-AGENT-README.md](README/REVERSE-AGENT-README.md)
-
----
+フロントマターの形式・制約と配布フォルダの詳細は、[コンテンツモデル](specs/01-content-model.md)を参照してください。

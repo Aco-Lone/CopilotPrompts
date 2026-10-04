@@ -1,3 +1,9 @@
+---
+title: TDD オーケストレーション
+summary: 詳細設計書からテストファーストで C# 実装を自動化するエージェント群
+tags: [tdd, csharp, orchestration, testing]
+type: bundle
+---
 # TDD オーケストレーションエージェント
 
 詳細設計書（Markdown / AsciiDoc + PlantUML）からテストファーストで実装を自動化するカスタムエージェント群です。
