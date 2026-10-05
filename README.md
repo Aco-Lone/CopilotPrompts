@@ -4,6 +4,8 @@ GitHub Copilot 向けのエージェント・プロンプトを配布するカ�
 
 公開 URL（初回の GitHub Pages デプロイ後に利用可能）: [https://aco-lone.github.io/CopilotPrompts/](https://aco-lone.github.io/CopilotPrompts/)
 
+> デプロイ前提: リポジトリの Settings → Pages → Build and deployment → Source を **GitHub Actions** に設定してください（未設定だと `deploy-pages` が 404 で失敗します）。
+
 ## カタログ構成
 
 `catalog/<slug>/` の各フォルダが 1 つのカタログアイテムです。フォルダにはアイテム情報を記載する `README.md` と、配布するエージェント・プロンプトなどのファイルを置きます。アイテムの説明とメタデータは、それぞれのフォルダ内の `README.md` を参照してください。
