@@ -8,9 +8,11 @@ const { item } = Astro.props;
 ---
 
 <li class="card" data-slug={item.slug}>
+  <div class="card-heading">
+    <span class="badge">{item.type}</span>
+  </div>
   <h2><a href={siteUrl(`items/${item.slug}/`)}>{item.title}</a></h2>
-  <span class="badge">{item.type}</span>
-  <p>{item.summary}</p>
+  <p class="card-summary">{item.summary}</p>
   <ul class="tag-list" aria-label="タグ">
     {item.tags.map((tag) => (
       <li><button type="button" class="tag-btn" data-tag={normalizeTag(tag)} aria-pressed="false">{tag}</button></li>

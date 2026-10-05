@@ -4,10 +4,10 @@ const { command } = Astro.props;
 if (command.length === 0) throw new Error("CopyButton requires a non-empty command");
 ---
 
-<div class="download" data-copy-root>
+<div class="download-panel" data-copy-root>
   <pre class="command"><code data-command>{command}</code></pre>
-  <button type="button" data-copy-button hidden>コマンドをコピー</button>
-  <span role="status" aria-live="polite" data-copy-status></span>
+  <button type="button" class="copy-button" data-copy-button hidden>コマンドをコピー</button>
+  <span class="copy-status" role="status" aria-live="polite" data-copy-status></span>
 </div>
 <script>
   import "../scripts/copy-command";

@@ -12,15 +12,33 @@ const tagCounts = buildTagCounts(index);
 ---
 
 <SiteLayout title="Copilot Prompts" description="GitHub Copilot 向けプロンプト・エージェントのカタログ">
-  <main>
-    <h1>Copilot Prompts</h1>
-    <FilterControls tagCounts={tagCounts} />
-    <p id="empty" class="empty" hidden>
-      条件に一致するアイテムはありません <button type="button" id="reset-all">すべての条件を解除</button>
-    </p>
-    <ul class="cards" id="cards">
-      {index.map((item) => <ItemCard item={item} />)}
-    </ul>
+  <main class="home-page">
+    <section class="home-intro" aria-labelledby="home-title">
+      <p class="eyebrow">COPILOT 向けカタログ</p>
+      <h1 id="home-title">Copilotを、<br />もっと自分らしく。</h1>
+      <p class="home-lede">
+        エージェント、スキル、プロンプトを見つけて、いつもの開発に取り入れよう。
+      </p>
+    </section>
+    <section class="catalog-section" aria-labelledby="catalog-title">
+      <div class="catalog-panel">
+        <div class="catalog-heading">
+          <p class="eyebrow">カタログ</p>
+          <h2 id="catalog-title">プロンプトを探す</h2>
+          <p>キーワードや種別、タグからカタログを絞り込めます。</p>
+        </div>
+        <FilterControls tagCounts={tagCounts} />
+      </div>
+      <div class="results-area">
+        <p id="empty" class="empty" hidden>
+          条件に一致するアイテムはありません
+          <button type="button" id="reset-all" class="pill-button">すべての条件を解除</button>
+        </p>
+        <ul class="cards" id="cards">
+          {index.map((item) => <ItemCard item={item} />)}
+        </ul>
+      </div>
+    </section>
     <script is:inline type="application/json" id="catalog-index" set:html={serializeForScript(index)} />
   </main>
   <script>

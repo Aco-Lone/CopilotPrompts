@@ -4,8 +4,11 @@ import { siteUrl } from "../lib/site-urls";
 ---
 
 <SiteLayout title="アイテムが見つかりません | Copilot Prompts">
-  <main>
-    <h1>アイテムが見つかりません</h1>
-    <p><a href={siteUrl("")}>トップページへ戻る</a></p>
+  <main class="not-found-page">
+    <section class="not-found-panel" aria-labelledby="not-found-title">
+      <p class="eyebrow">404</p>
+      <h1 id="not-found-title">アイテムが見つかりません</h1>
+      <a class="pill-button" href={siteUrl("")}>トップページへ戻る</a>
+    </section>
   </main>
 </SiteLayout>

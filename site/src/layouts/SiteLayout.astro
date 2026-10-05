@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { siteUrl } from "../lib/site-urls";
+import siteConfig from "../../site.config";
 
 interface Props {
   title: string;
@@ -19,7 +20,18 @@ const { title, description } = Astro.props;
     {description && <meta name="description" content={description} />}
   </head>
   <body>
-    <header class="site-header"><a href={siteUrl("")}>Copilot Prompts</a></header>
+    <header class="site-header">
+      <a class="site-brand" href={siteUrl("")}>
+        <span class="site-brand-mark" aria-hidden="true">CP</span>
+        <span>Copilot Prompts</span>
+      </a>
+      <a
+        class="repo-link"
+        href={`https://github.com/${siteConfig.owner}/${siteConfig.repo}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >GitHubで見る</a>
+    </header>
     <slot />
   </body>
 </html>

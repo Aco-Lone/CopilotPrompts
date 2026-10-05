@@ -26,34 +26,45 @@ const files = listItemFiles(fileURLToPath(new URL(`../../../../catalog/${slug}/`
 ---
 
 <SiteLayout title={`${data.title} | Copilot Prompts`} description={data.summary}>
-  <main>
-    <nav aria-label="パンくず"><a href={siteUrl("")}>トップ</a> &gt; <span>{data.title}</span></nav>
-    <h1>{data.title}</h1>
-    <p>{data.summary}</p>
+  <main class="detail-page">
+    <nav class="breadcrumb" aria-label="パンくず">
+      <a href={siteUrl("")}>トップ</a>
+      <span aria-hidden="true">/</span>
+      <span>{data.title}</span>
+    </nav>
+    <header class="detail-intro">
+      <p class="eyebrow">アイテム詳細</p>
+      <h1>{data.title}</h1>
+      <p class="detail-summary">{data.summary}</p>
+    </header>
     <ul class="meta">
-      <li>種別: {data.type}</li>
-      {data.version && <li>バージョン: {data.version}</li>}
-      {data.author && <li>作者: {data.author}</li>}
-      {data.updated && <li>更新日: <time datetime={data.updated}>{data.updated}</time></li>}
+      <li><span>種別</span><strong>{data.type}</strong></li>
+      {data.version && <li><span>バージョン</span><strong>{data.version}</strong></li>}
+      {data.author && <li><span>作者</span><strong>{data.author}</strong></li>}
+      {data.updated && (
+        <li><span>更新日</span><strong><time datetime={data.updated}>{data.updated}</time></strong></li>
+      )}
     </ul>
     <ul class="tag-list" aria-label="タグ">
       {data.tags.map((tag) => (
         <li><a class="tag-link" href={`${siteUrl("")}?tags=${encodeURIComponent(normalizeTag(tag))}`}>{tag}</a></li>
       ))}
     </ul>
-    <p><a href={buildSourceUrl(slug, siteConfig)} target="_blank" rel="noopener noreferrer">GitHub でソースを見る</a></p>
-    <section>
-      <h2>ダウンロード</h2>
+    <p class="source-link">
+      <a href={buildSourceUrl(slug, siteConfig)} target="_blank" rel="noopener noreferrer">GitHub でソースを見る</a>
+    </p>
+    <section class="detail-section download-section" aria-labelledby="download-title">
+      <h2 id="download-title">ダウンロード</h2>
       <CopyButton command={command} />
       <p class="notes">Node.js が必要です。<code>./{slug}</code> フォルダが作成され、既存のフォルダがある場合は失敗します。上書きする場合は手動で <code>--force</code> を追加してください。</p>
     </section>
-    <section>
-      <h2>説明</h2>
+    <section class="detail-section description-section" aria-labelledby="description-title">
+      <h2 id="description-title">説明</h2>
       {html === "" ? <p>説明はありません</p> : <div class="markdown" set:html={html} />}
     </section>
-    <section>
-      <h2>同梱ファイル</h2>
-      <ul>
+    <section class="detail-section files-section" aria-labelledby="files-title">
+      <h2 id="files-title">同梱ファイル</h2>
+      <ul class="file-list">
         {files.map((file) => (
           <li><a href={buildFileUrl(slug, file, siteConfig)} rel="noopener noreferrer">{file}</a></li>
         ))}
